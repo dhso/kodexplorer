@@ -7,7 +7,7 @@ ENV KODEXPLORER_URL http://static.kodcloud.com/update/download/kodexplorer${KODE
 
 RUN set -x \
   && mkdir -p /usr/src/kodexplorer \
-  && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+  && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget unzip && rm -rf /var/lib/apt/lists/* \
   && wget -O /tmp/kodexplorer.zip ${KODEXPLORER_URL} \
   && unzip /tmp/kodexplorer.zip -d /usr/src/kodexplorer/ \
   && apt-get purge -y --auto-remove ca-certificates wget \
