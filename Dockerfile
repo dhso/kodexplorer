@@ -2,14 +2,13 @@ FROM php:7.3-apache
 
 LABEL MAINTAINER="dhso <dhso@163.com>"
 
-# 配置glibc
-ENV KODEXPLORER_VERSION="4.40"
-ENV KODEXPLORER_URL="http://static.kodcloud.com/update/download/kodexplorer$KODEXPLORER_VERSION.zip"
+ENV KODEXPLORER_VERSION 4.40
+ENV KODEXPLORER_URL http://static.kodcloud.com/update/download/kodexplorer${KODEXPLORER_VERSION}.zip
 
 RUN set -x \
   && mkdir -p /usr/src/kodexplorer \
   && apk --update --no-cache add wget bash \
-  && wget -O /tmp/kodexplorer.tar.gz "$KODEXPLORER_URL" \
+  && wget -O /tmp/kodexplorer.tar.gz ${KODEXPLORER_URL} \
   && tar -xzf /tmp/kodexplorer.tar.gz -C /usr/src/kodexplorer/ --strip-components=1 \
   && rm -rf /tmp/*
 
