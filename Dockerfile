@@ -1,31 +1,31 @@
-FROM alpine:20190228
+FROM php:7.3-apache
 
 LABEL MAINTAINER="dhso <dhso@163.com>"
 
 # 配置glibc
-ENV GLIBC_VERSION=2.29-r0
-ENV RRSHAREWEB_SRC_URL=http://appdown.rrys.tv/rrshareweb_centos7.tar.gz
+ENV KODEXPLORER_VERSION="4.40"
+ENV KODEXPLORER_URL="http://static.kodcloud.com/update/download/kodexplorer$KODEXPLORER_VERSION.zip"
 
-RUN apk update \
-	&& apk --no-cache add wget libstdc++ tzdata \
-	&& cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-	&& echo 'Asia/Shanghai' >  /etc/timezone \
-	&& wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-	&& wget -q https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk \
-	&& wget -q https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk \
- 	&& apk --no-cache add glibc-${GLIBC_VERSION}.apk \
-	&& apk --no-cache add glibc-bin-${GLIBC_VERSION}.apk \
-	&& mkdir -p /rrshare \
-	&& mkdir -p /opt/work/store \
-	&& wget -q ${RRSHAREWEB_SRC_URL} -O /rrshare/rrshareweb.tar.gz \
-	&& tar zxvf /rrshare/rrshareweb.tar.gz -C /rrshare/ \
-	&& rm -rf /rrshare/rrshareweb.tar.gz \
-	&& apk del wget tzdata \
-	&& rm -rf /glibc-${GLIBC_VERSION}.apk \
-	&& rm -rf /glibc-bin-${GLIBC_VERSION}.apk
+RUN set -x \
+  && mkdir -p /usr/src/kodexplorer \
+  && apk --update --no-cache add wget bash \
+  && wget -O /tmp/kodexplorer.tar.gz "$KODEXPLORER_URL" \
+  && tar -xzf /tmp/kodexplorer.tar.gz -C /usr/src/kodexplorer/ --strip-components=1 \
+  && rm -rf /tmp/*
 
-WORKDIR /
-VOLUME ["/opt/work/store"]
-EXPOSE 3001
+RUN set -x \
+  && apk add --no-cache --update \
+        freetype libpng libjpeg-turbo \
+        freetype-dev libpng-dev libjpeg-turbo-dev \
+  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+  && docker-php-ext-install -j "$(getconf _NPROCESSORS_ONLN)" gd \
+  && apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
 
-CMD ["sh", "-c", "/rrshare/rrshareweb/rrshareweb"]
+WORKDIR /var/www/html
+
+COPY entrypoint.sh /usr/local/bin/
+
+EXPOSE 80
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD [ "php", "-S", "0000:80", "-t", "/var/www/html" ]
