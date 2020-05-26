@@ -29,8 +29,8 @@ RUN set -x \
 
 WORKDIR /var/www/html
 
-COPY etc/ /etc/
-COPY usr/ /usr/
+COPY docker-apache2.conf /etc/apache2/conf-enabled/
+COPY docker-php.ini /usr/local/etc/php/conf.d/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/entrypoint.sh
 
