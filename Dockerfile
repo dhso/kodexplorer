@@ -29,6 +29,8 @@ RUN set -x \
 
 WORKDIR /var/www/html
 
+COPY etc/ /etc/
+COPY usr/ /usr/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/entrypoint.sh
 
