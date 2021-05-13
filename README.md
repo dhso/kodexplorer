@@ -1,5 +1,7 @@
 # dhso/kodexplorer
 > kodexplorer for docker.
+> current version: 4.45
+
 
 ## 运行 run
 ```bash
