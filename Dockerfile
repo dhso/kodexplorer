@@ -3,7 +3,7 @@ FROM php:7.3-apache
 LABEL MAINTAINER="dhso <dhso@163.com>"
 
 ENV KODEXPLORER_VERSION 4.46
-ENV KODEXPLORER_URL http://static.kodcloud.com/update/download/kodexplorer${KODEXPLORER_VERSION}.zip
+ENV KODEXPLORER_URL http://static.kodcloud.com/update/update/2.0-${KODEXPLORER_VERSION}.zip
 
 RUN set -x \
   && mkdir -p /usr/src/kodexplorer \
